@@ -16,18 +16,13 @@ using namespace std;
 bool IsValidPalindrome(const string &strInput)
 {
     // your code go here ...
-    return
     string input = strInput;
     for (int left = 0, right = input.size() - 1; left < right; left++, right--) {
     while (!isalnum(input[left]) && left < right) left++;
     while (!isalnum(input[right]) && left < right) right--;
-    if (toupper(input[left] != toupper(input[right]))) return false;
+    if (toupper(input[left]) != toupper(input[right])) return false;
     }
     return true;
 }
 
-int main() {
-    cout << IsValidPalindrome("A man, a plan, a canal: Panama") << endl;
-    cout << IsValidPalindrome("sdlckniern");
-}
 
