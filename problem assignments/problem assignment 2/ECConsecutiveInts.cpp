@@ -1,6 +1,6 @@
 //
 //  ECConsecutiveInts.cpp
-//  
+//
 //
 //  Created by Yufeng Wu on 1/15/23.
 //
@@ -25,5 +25,31 @@ using namespace std;
 bool ECConsecutiveInts(const string &strInput)
 {
   // your code  here
-}
+  // find first number, concatinate successive numbers to the string until it equals input string
 
+  int len = strInput.length();
+  int firstNum, nextNum;
+  string newStr;
+
+  for (int i = 0; i < len / 2; i++)
+  {
+    try
+    {
+      firstNum = stoi(strInput.substr(0, i + 1));
+    }
+    catch (...)
+    {
+      return false;
+    }
+    newStr = strInput.substr(0, i + 1);
+    nextNum = firstNum;
+    while (newStr.length() < len)
+    {
+      nextNum++;
+      newStr += to_string(nextNum);
+    }
+    if (newStr == strInput)
+      return true;
+  }
+  return false;
+}
