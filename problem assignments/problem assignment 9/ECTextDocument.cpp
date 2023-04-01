@@ -1,6 +1,6 @@
 //
 //  ECTextDocument.cpp
-//  
+//
 //
 //  Created by Yufeng Wu on 2/26/20.
 //
@@ -15,183 +15,183 @@ using namespace std;
 // **********************************************************
 // Commands
 
-// your code goes here 
-void InsertTextCommand :: Execute()
+// your code goes here
+void InsertTextCommand::Execute()
 {
-  std::cout << "InsertTextCommand::Execute" << doc.GetDocLen() << std::endl;
-  for (int i = pos; i < doc.GetDocLen(); i++) {
-    std::cout << "IN LOOP";
-    doc.InsertCharAt(i, chars[i-pos]);
+  // std::cout << "InsertTextCommand::Execute" << doc.GetDocLen() << std::endl;
+  for (int i = pos; i < chars.size() + pos; i++)
+  {
+    // std::cout << "IN LOOP";
+    doc.InsertCharAt(i, chars[i - pos]);
   }
 }
 
-void InsertTextCommand :: UnExecute()
+void InsertTextCommand::UnExecute()
 {
-  for (int i = pos; i < doc.GetDocLen(); i++) {
-    doc.RemoveCharAt(i);
+  for (int i = 0; i < chars.size(); i++)
+  {
+    std::cout << i << std::endl;
+    doc.RemoveCharAt(pos);
   }
 }
 
-void RemoveTextCommand :: Execute()
+void RemoveTextCommand::Execute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    removed.push_back(doc.GetCharAt(i));
-    doc.RemoveCharAt(i);
+  if (len > doc.GetDocLen())
+  {
+    return;
+  }
+  for (int i = 0; i < len; i++)
+  {
+    removed.push_back(doc.GetCharAt(pos));
+    doc.RemoveCharAt(pos);
   }
 }
 
-void RemoveTextCommand :: UnExecute()
+void RemoveTextCommand::UnExecute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    doc.InsertCharAt(i, removed[i]);
+  for (int i = len; i >= 0; i--)
+  {
+    std::cout << i << std::endl;
+    doc.InsertCharAt(pos, removed[i]);
   }
 }
 
-void CapTextCommand :: Execute()
+void CapTextCommand::Execute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    doc.CapCharAt(i);
+  for (int i = 0; i < len; i++)
+  {
+    doc.CapCharAt(i + pos);
   }
 }
 
-void CapTextCommand :: UnExecute()
+void CapTextCommand ::UnExecute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    doc.LowerCharAt(i);
+  for (int i = 0; i < len; i++)
+  {
+    doc.LowerCharAt(i + pos);
   }
 }
 
-void LowerTextCommand :: Execute()
+void LowerTextCommand ::Execute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    doc.LowerCharAt(i);
+  for (int i = 0; i < len; i++)
+  {
+    doc.LowerCharAt(i + pos);
   }
 }
 
-void LowerTextCommand :: UnExecute()
+void LowerTextCommand ::UnExecute()
 {
-  for (int i = pos; i < pos + len; i++) {
-    doc.CapCharAt(i);
+  for (int i = 0; i < len; i++)
+  {
+    doc.CapCharAt(i + pos);
   }
 }
 // **********************************************************
 // Controller for text document
 
-
-ECTextDocumentCtrl :: ECTextDocumentCtrl(ECTextDocument &docIn) : doc(docIn)
+ECTextDocumentCtrl ::ECTextDocumentCtrl(ECTextDocument &docIn) : doc(docIn)
 {
   cmdHistory = ECCommandHistory();
 }
 
-ECTextDocumentCtrl :: ~ECTextDocumentCtrl()
+ECTextDocumentCtrl ::~ECTextDocumentCtrl()
 {
 }
 
-void ECTextDocumentCtrl :: InsertTextAt(int pos, const std::vector<char> &listCharsToIns)
+void ECTextDocumentCtrl ::InsertTextAt(int pos, const std::vector<char> &listCharsToIns)
 {
   // your code
-  std::cout << "CONTSOL INSERT" << std::endl;
+  // std::cout << "CONTROL INSERT" << std::endl;
   InsertTextCommand *cmd = new InsertTextCommand(doc, pos, listCharsToIns);
   cmdHistory.ExecuteCmd(cmd);
-
 }
 
-void ECTextDocumentCtrl :: RemoveTextAt(int pos, int lenToRemove)
+void ECTextDocumentCtrl ::RemoveTextAt(int pos, int lenToRemove)
 {
   // your code
   RemoveTextCommand *cmd = new RemoveTextCommand(doc, pos, lenToRemove);
   cmdHistory.ExecuteCmd(cmd);
-
 }
 
-void ECTextDocumentCtrl :: CapTextAt(int pos, int lenToCap)
+void ECTextDocumentCtrl ::CapTextAt(int pos, int lenToCap)
 {
   // your code
   CapTextCommand *cmd = new CapTextCommand(doc, pos, lenToCap);
   cmdHistory.ExecuteCmd(cmd);
 }
 
-void ECTextDocumentCtrl :: LowerTextAt(int pos, int lenToLower)
+void ECTextDocumentCtrl ::LowerTextAt(int pos, int lenToLower)
 {
   // your code
   LowerTextCommand *cmd = new LowerTextCommand(doc, pos, lenToLower);
   cmdHistory.ExecuteCmd(cmd);
 }
 
-bool ECTextDocumentCtrl :: Undo()
+bool ECTextDocumentCtrl ::Undo()
 {
   // your code
-  cmdHistory.Undo();
+  return cmdHistory.Undo();
 }
 
-bool ECTextDocumentCtrl :: Redo()
+bool ECTextDocumentCtrl ::Redo()
 {
   // your code
-  cmdHistory.Redo();
+  return cmdHistory.Redo();
 }
 
 // **********************************************************
 // Document for text document
 
-
-ECTextDocument :: ECTextDocument() 
+ECTextDocument::ECTextDocument()
 {
   docCtrl = new ECTextDocumentCtrl(*this);
 }
 
-ECTextDocument :: ~ECTextDocument()
+ECTextDocument::~ECTextDocument()
 {
   delete docCtrl;
 }
 
-ECTextDocumentCtrl & ECTextDocument :: GetCtrl()
+ECTextDocumentCtrl &ECTextDocument ::GetCtrl()
 {
-    return *docCtrl;
+  return *docCtrl;
 }
 
-char ECTextDocument :: GetCharAt(int pos) const
+char ECTextDocument::GetCharAt(int pos) const
 {
-    return listChars[pos];
+  return listChars[pos];
 }
 
-void ECTextDocument :: InsertCharAt(int pos, char ch)
+void ECTextDocument::InsertCharAt(int pos, char ch)
 {
   // your code here
-  std::cout << "INSERT CHAR AT" << std::endl;
+  // std::cout << "INSERT CHAR AT" << std::endl;
   vector<char>::iterator it = listChars.begin() + pos;
   listChars.insert(it, ch);
-  for (auto x : listChars) {
-    std::cout << x << " ";
+  for (auto x : listChars)
+  {
+    // std::cout << x << " ";
   }
-  std::cout << std::endl;
+  // std::cout << std::endl;
 }
 
-void ECTextDocument :: RemoveCharAt(int pos)
+void ECTextDocument::RemoveCharAt(int pos)
 {
   // your code here
   vector<char>::iterator it = listChars.begin() + pos;
   listChars.erase(it);
 }
 
-void ECTextDocument :: CapCharAt(int pos)
+void ECTextDocument::CapCharAt(int pos)
 {
   // your code here
-  for (int i = 0; i < listChars.size(); i++)
-  {
-    if (i == pos) {
-      listChars[i] = toupper(listChars[i]);
-    }
-  }
+  listChars[pos] = toupper(listChars[pos]);
 }
 
-void ECTextDocument :: LowerCharAt(int pos)
+void ECTextDocument::LowerCharAt(int pos)
 {
   // your code here
-  for (int i = 0; i < listChars.size(); i++)
-  {
-    if (i == pos) {
-      listChars[i] = tolower(listChars[i]);
-    }
-  }
+  listChars[pos] = tolower(listChars[pos]);
 }
-
