@@ -2,14 +2,14 @@
 #include "ECSimHuman.h"
 #include "ECSimOrganization.h"
 #include <iostream>
-#include <string> 
+#include <string>
 
 using namespace std;
 
-template<class T>
+template <class T>
 void ASSERT_EQ(T x, T y)
 {
-  if( x == y )
+  if (x == y)
   {
     cout << "Test passed: equal: " << x << "  " << y << endl;
   }
@@ -20,7 +20,7 @@ void ASSERT_EQ(T x, T y)
 }
 
 // setup campus entities
-// IDs 
+// IDs
 const int BURSAR = 1;
 const int REC = 2;
 const int DINING = 3;
@@ -35,11 +35,11 @@ const int S4 = 104;
 
 // dolloar amounts
 const int TUITION = 10000;
-const int SALARY = 5000;	// employee salary
-const int REC_EXP = 500;	// Rec center daily expenses
-const int DINING_EXP = 200;	// Dining hall daily expenses
-const int LIB_EXP = 100;	// Library daily expenses
-const int MISC_EXP_STUDENT = 1000;  // Misc expense of student
+const int SALARY = 5000;           // employee salary
+const int REC_EXP = 500;           // Rec center daily expenses
+const int DINING_EXP = 200;        // Dining hall daily expenses
+const int LIB_EXP = 100;           // Library daily expenses
+const int MISC_EXP_STUDENT = 1000; // Misc expense of student
 const int MEAL_COST = 5;
 const int REC_COST_STUDENT = 10;
 const int HR_BLOCK_FUND = 10000;
@@ -52,22 +52,22 @@ void Test1()
   // Bursar, two students
   ECSimBursar b(BURSAR);
   b.SetTuition(TUITION);
-  sim.AddSimItem( &b );
+  sim.AddSimItem(&b);
   ECSimStudent s1(S1);
-  s1.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s1 );
+  s1.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s1);
   ECSimStudent s2(S2);
-  s2.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s2 );
+  s2.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s2);
 
   ECCampusSimScript script;
-  script.AddSimEvt(S1, BURSAR);  
+  script.AddSimEvt(S1, BURSAR);
   script.AddSimEvt(S2, BURSAR);
   sim.Simulate(script);
   // S1 and S2 only have misc-exp left after enrolling; bursar got tuition dollars
-  ASSERT_EQ( s1.GetBalance(), MISC_EXP_STUDENT);  
-  ASSERT_EQ( s2.GetBalance(), MISC_EXP_STUDENT);  
-  ASSERT_EQ( b.GetBalance(), 2*TUITION);  
+  ASSERT_EQ(s1.GetBalance(), MISC_EXP_STUDENT);
+  ASSERT_EQ(s2.GetBalance(), MISC_EXP_STUDENT);
+  ASSERT_EQ(b.GetBalance(), 2 * TUITION);
 }
 
 void Test2()
@@ -78,34 +78,34 @@ void Test2()
   // Bursar, two students
   ECSimBursar b(BURSAR);
   b.SetTuition(TUITION);
-  sim.AddSimItem( &b );
+  sim.AddSimItem(&b);
 
   // dining hall
   ECSimDiningHall din(DINING);
   din.SetBudgetForDay(DINING_EXP);
-  sim.AddSimItem( &din );
+  sim.AddSimItem(&din);
 
   // rec center
   ECSimRecCenter rec(REC);
   rec.SetBudgetForDay(REC_EXP);
-  sim.AddSimItem( &rec );
+  sim.AddSimItem(&rec);
 
   // library
   ECSimLibrary lib(LIBRARY);
   lib.SetBudgetForDay(LIB_EXP);
-  sim.AddSimItem( &lib );
+  sim.AddSimItem(&lib);
 
   // two students
   ECSimStudent s1(S1);
-  s1.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s1 );
+  s1.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s1);
   ECSimStudent s2(S2);
-  s2.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s2 );
+  s2.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s2);
 
   ECCampusSimScript script;
   // two students enroll
-  script.AddSimEvt(S1, BURSAR);  
+  script.AddSimEvt(S1, BURSAR);
   script.AddSimEvt(S2, BURSAR);
 
   // Bursar provides budget to Dining and rec center
@@ -124,20 +124,20 @@ void Test2()
   {
     sim.Simulate(script);
   }
-  catch( std::string ex )
+  catch (std::string ex)
   {
     cout << "WARNING: simulation aborted with message: " << ex << endl;
   }
   // S1 and S2 only have misc-exp left after enrolling; bursar got tuition dollars
-  ASSERT_EQ( s1.GetBalance(), MISC_EXP_STUDENT-REC_COST_STUDENT);  
-  ASSERT_EQ( s2.GetBalance(), MISC_EXP_STUDENT-MEAL_COST);  
-  ASSERT_EQ( b.GetBalance(), 2*TUITION-DINING_EXP-REC_EXP);
-  ASSERT_EQ( din.GetBalance(), DINING_EXP + MEAL_COST );
-  ASSERT_EQ( rec.GetBalance(), REC_COST_STUDENT + REC_EXP );
-  ASSERT_EQ( lib.GetBalance(), 0);  // library didn't receive budget, so remain at 0  
+  ASSERT_EQ(s1.GetBalance(), MISC_EXP_STUDENT - REC_COST_STUDENT);
+  ASSERT_EQ(s2.GetBalance(), MISC_EXP_STUDENT - MEAL_COST);
+  ASSERT_EQ(b.GetBalance(), 2 * TUITION - DINING_EXP - REC_EXP);
+  ASSERT_EQ(din.GetBalance(), DINING_EXP + MEAL_COST);
+  ASSERT_EQ(rec.GetBalance(), REC_COST_STUDENT + REC_EXP);
+  ASSERT_EQ(lib.GetBalance(), 0); // library didn't receive budget, so remain at 0
 }
 
-// Same campus setting, with end-of-day  
+// Same campus setting, with end-of-day
 void Test3()
 {
   cout << "*** Test3\n";
@@ -146,36 +146,36 @@ void Test3()
   // Bursar, two students
   ECSimBursar b(BURSAR);
   b.SetTuition(TUITION);
-  sim.AddSimItem( &b );
+  sim.AddSimItem(&b);
 
   // dining hall
   ECSimDiningHall din(DINING);
   din.SetBudgetForDay(DINING_EXP);
-  sim.AddSimItem( &din );
+  sim.AddSimItem(&din);
 
   // rec center
   ECSimRecCenter rec(REC);
   rec.SetBudgetForDay(REC_EXP);
-  sim.AddSimItem( &rec );
+  sim.AddSimItem(&rec);
 
   // library
   ECSimLibrary lib(LIBRARY);
   lib.SetBudgetForDay(LIB_EXP);
-  sim.AddSimItem( &lib );
+  sim.AddSimItem(&lib);
 
   // two students
   ECSimStudent s1(S1);
-  s1.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s1 );
+  s1.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s1);
   ECSimStudent s2(S2);
-  s2.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s2 );
+  s2.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s2);
 
   ECCampusSimScript script;
-  
+
   // ------ DAY ONE
   // two students enroll
-  script.AddSimEvt(S1, BURSAR);  
+  script.AddSimEvt(S1, BURSAR);
   script.AddSimEvt(S2, BURSAR);
   // Bursar provides budget to Dining and rec center
   // Note: bursar is the receiver since you are asking for money!
@@ -193,16 +193,16 @@ void Test3()
   try
   {
     sim.Simulate(script);
-    ASSERT_EQ( 0, 1);
+    ASSERT_EQ(0, 1);
   }
-  catch( std::string ex )
+  catch (std::string ex)
   {
     cout << "WARNING: simulation aborted with message: " << ex << endl;
-    ASSERT_EQ( ex, string("BANKRUPT") );
+    ASSERT_EQ(ex, string("BANKRUPT"));
   }
 }
 
-// Same campus setting, library provided with fund, two days schedule 
+// Same campus setting, library provided with fund, two days schedule
 void Test4()
 {
   cout << "*** Test4\n";
@@ -211,36 +211,36 @@ void Test4()
   // Bursar, two students
   ECSimBursar b(BURSAR);
   b.SetTuition(TUITION);
-  sim.AddSimItem( &b );
+  sim.AddSimItem(&b);
 
   // dining hall
   ECSimDiningHall din(DINING);
   din.SetBudgetForDay(DINING_EXP);
-  sim.AddSimItem( &din );
+  sim.AddSimItem(&din);
 
   // rec center
   ECSimRecCenter rec(REC);
   rec.SetBudgetForDay(REC_EXP);
-  sim.AddSimItem( &rec );
+  sim.AddSimItem(&rec);
 
   // library
   ECSimLibrary lib(LIBRARY);
   lib.SetBudgetForDay(LIB_EXP);
-  sim.AddSimItem( &lib );
+  sim.AddSimItem(&lib);
 
   // two students
   ECSimStudent s1(S1);
-  s1.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s1 );
+  s1.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s1);
   ECSimStudent s2(S2);
-  s2.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s2 );
+  s2.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s2);
 
   ECCampusSimScript script;
-  
+
   // ------ DAY ONE
   // two students enroll
-  script.AddSimEvt(S1, BURSAR);  
+  script.AddSimEvt(S1, BURSAR);
   script.AddSimEvt(S2, BURSAR);
   // Bursar provides budget to Dining and rec center
   // Note: bursar is the receiver since you are asking for money!
@@ -267,38 +267,38 @@ void Test4()
   try
   {
     sim.Simulate(script);
-    
-    ASSERT_EQ( s1.GetBalance(), MISC_EXP_STUDENT-REC_COST_STUDENT-MEAL_COST);  
-    ASSERT_EQ( s2.GetBalance(), MISC_EXP_STUDENT-MEAL_COST);  
-    ASSERT_EQ( b.GetBalance(), 2*TUITION-DINING_EXP-REC_EXP-LIB_EXP+2*MEAL_COST);
+
+    ASSERT_EQ(s1.GetBalance(), MISC_EXP_STUDENT - REC_COST_STUDENT - MEAL_COST);
+    ASSERT_EQ(s2.GetBalance(), MISC_EXP_STUDENT - MEAL_COST);
+    ASSERT_EQ(b.GetBalance(), 2 * TUITION - DINING_EXP - REC_EXP - LIB_EXP + 2 * MEAL_COST);
     // Note: daily budget deducted at the end of day
-    ASSERT_EQ( din.GetBalance(), 0 );
-    ASSERT_EQ( rec.GetBalance(), REC_COST_STUDENT );
-    ASSERT_EQ( lib.GetBalance(), 0);  // library didn't receive budget, so remain at 0  
+    ASSERT_EQ(din.GetBalance(), 0);
+    ASSERT_EQ(rec.GetBalance(), REC_COST_STUDENT);
+    ASSERT_EQ(lib.GetBalance(), 0); // library didn't receive budget, so remain at 0
   }
-  catch( std::string ex )
+  catch (std::string ex)
   {
     cout << "WARNING: simulation aborted with message: " << ex << endl;
-    ASSERT_EQ( ex, string("BANKRUPT? NO!") );
+    ASSERT_EQ(ex, string("BANKRUPT? NO!"));
   }
 }
 
 void Test5()
 {
   cout << "*** Test5\n";
-  // Bursar, two students, HR, one employee 
+  // Bursar, two students, HR, one employee
   ECCampusSimulator sim;
   // Bursar, two students
   ECSimBursar b(BURSAR);
   b.SetTuition(TUITION);
-  sim.AddSimItem( &b );
+  sim.AddSimItem(&b);
   ECSimStudent s1(S1);
-  s1.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s1 );
+  s1.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s1);
   ECSimStudent s2(S2);
-  s2.Paid( TUITION + MISC_EXP_STUDENT );
-  sim.AddSimItem( &s2 );
-  // HR budget: 
+  s2.Paid(TUITION + MISC_EXP_STUDENT);
+  sim.AddSimItem(&s2);
+  // HR budget:
   ECSimHR h(HR);
   h.SetBudgetForDay(HR_BLOCK_FUND);
   sim.AddSimItem(&h);
@@ -308,7 +308,7 @@ void Test5()
   sim.AddSimItem(&e);
 
   ECCampusSimScript script;
-  script.AddSimEvt(S1, BURSAR);  
+  script.AddSimEvt(S1, BURSAR);
   script.AddSimEvt(S2, BURSAR);
   // HR requests fund (assume to be fixed amount, $10,000)
   script.AddSimEvt(HR, BURSAR);
@@ -316,11 +316,11 @@ void Test5()
   script.AddSimEvt(E1, HR);
   sim.Simulate(script);
   // S1 and S2 only have misc-exp left after enrolling; bursar got tuition dollars
-  ASSERT_EQ( s1.GetBalance(), MISC_EXP_STUDENT);  
-  ASSERT_EQ( s2.GetBalance(), MISC_EXP_STUDENT);  
-  ASSERT_EQ( b.GetBalance(), 2*TUITION-HR_BLOCK_FUND);
-  ASSERT_EQ( h.GetBalance(), HR_BLOCK_FUND-SALARY);
-  ASSERT_EQ( e.GetBalance(), SALARY);  
+  ASSERT_EQ(s1.GetBalance(), MISC_EXP_STUDENT);
+  ASSERT_EQ(s2.GetBalance(), MISC_EXP_STUDENT);
+  ASSERT_EQ(b.GetBalance(), 2 * TUITION - HR_BLOCK_FUND);
+  ASSERT_EQ(h.GetBalance(), HR_BLOCK_FUND - SALARY);
+  ASSERT_EQ(e.GetBalance(), SALARY);
 }
 
 int main()
@@ -331,4 +331,3 @@ int main()
   Test4();
   Test5();
 }
-
