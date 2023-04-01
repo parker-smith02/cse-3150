@@ -11,7 +11,7 @@
 // ******************************************************
 // Implement command history
 
-ECCommandHistory :: ECCommandHistory() 
+ECCommandHistory :: ECCommandHistory() : commandStack(), undoStack()
 {
   // your code goes here
 

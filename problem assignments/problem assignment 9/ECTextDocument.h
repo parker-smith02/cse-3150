@@ -20,14 +20,61 @@ class ECTextDocument;
 
 // your code goes here
 
+class InsertTextCommand : public ECCommand {
+public:
+    InsertTextCommand(ECTextDocument &_doc, int _pos, const std::vector<char> &_chars ) : doc(_doc), pos(_pos), chars(_chars) {}
+    void Execute();
+    void UnExecute();
+
+private:
+    ECTextDocument &doc;
+    int pos;
+    std::vector<char> chars;
+
+};
+
+class RemoveTextCommand : public ECCommand {
+public:
+    RemoveTextCommand(ECTextDocument &_doc, int _pos, int _len) : doc(_doc), pos(_pos), len(_len) {}
+    void Execute();
+    void UnExecute();
+private:
+    std::vector<char> removed;
+    ECTextDocument &doc;
+    int pos;
+    int len;
+};
+
+class CapTextCommand : public ECCommand {
+public:
+    CapTextCommand(ECTextDocument &_doc, int _pos, int _len) : doc(_doc), pos(_pos), len(_len) {}
+    void Execute();
+    void UnExecute();
+
+private:
+    ECTextDocument &doc;
+    int pos;
+    int len;
+};
+
+class LowerTextCommand : public ECCommand {
+public:
+    LowerTextCommand(ECTextDocument &_doc, int _pos, int _len) : doc(_doc), pos(_pos), len(_len) {}
+    void Execute();
+    void UnExecute();
+private:
+    ECTextDocument &doc;
+    int pos;
+    int len;
+};
+
 
 // **********************************************************
 // Controller for text document
 
-class ECTextDocumentCtrl : public ECCommandHistory
+class ECTextDocumentCtrl
 {
-public:
-    ECTextDocumentCtrl();                                                   // default constructor
+public:                                                // default constructor
     ECTextDocumentCtrl(ECTextDocument &docIn);          // conroller constructor takes the document as input
     virtual ~ECTextDocumentCtrl();
     void InsertTextAt(int pos, const std::vector<char> &listCharsToIns);    // insert a list of characters starting at position
@@ -39,7 +86,8 @@ public:
     
 private:
     // your code
-    ECTextDocument doc;
+    ECCommandHistory cmdHistory;
+    ECTextDocument &doc;
 };
 
 // **********************************************************
@@ -60,7 +108,7 @@ public:
     
 private:
     // your code
-    vector<char> listChars;
+    std::vector<char> listChars;
     ECTextDocumentCtrl *docCtrl;
 };
 

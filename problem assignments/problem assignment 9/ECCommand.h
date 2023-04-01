@@ -31,8 +31,8 @@ class ECCommandHistory
 public:
     ECCommandHistory();
     virtual ~ECCommandHistory();
-    bool Undo();
-    bool Redo();
+    virtual bool Undo();
+    virtual bool Redo();
     void ExecuteCmd( ECCommand *pCmd );
     
 private:
