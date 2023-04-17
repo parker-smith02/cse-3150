@@ -123,7 +123,6 @@ bool ECSimStartDeadlineTask::IsAborted(int tick) const {
 
 ECSimEndDeadlineTask :: ECSimEndDeadlineTask(ECSimTask *pTask, int tmEndDeadlineIn) : pTask(pTask), tmEndDeadline(tmEndDeadlineIn)
 {
-
 }
 
 // your code here
@@ -133,7 +132,7 @@ bool ECSimEndDeadlineTask::IsReadyToRun(int tick) const {
 }
 
 bool ECSimEndDeadlineTask::IsFinished(int tick) const {
-    if (tick > tmEndDeadline) {
+    if (tick >= tmEndDeadline) {
         return true;
     } else {
         return pTask->IsFinished(tick);
@@ -141,7 +140,7 @@ bool ECSimEndDeadlineTask::IsFinished(int tick) const {
 }
 
 bool ECSimEndDeadlineTask::IsAborted(int tick) const {
-    if (tick > tmEndDeadline) {
+    if (tick >= tmEndDeadline) {
         return true;
     } else {
         return pTask->IsAborted(tick);
