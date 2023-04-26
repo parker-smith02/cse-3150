@@ -1,10 +1,15 @@
-CC=g++
-CFLAGS=-c -Wall
+CXX = g++
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++11
 
-all: editor
+SRC = ECTextViewImp.cpp ECEditorTest.cpp Document.cpp Command.cpp KeyObservers.cpp
+OBJ = $(SRC:.cpp=.o)
 
-editor: ECTextViewImp.o ECEditorTest.o
-	$(CC) ECTextViewImp.o ECEditorTest.o -o editor
+editor: $(OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+.PHONY: clean
 clean:
-	rm -f *.o editor
+	rm -f $(OBJ) editor

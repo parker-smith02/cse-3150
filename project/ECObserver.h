@@ -10,6 +10,8 @@
 #define ECOBERVER_H
 
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include <algorithm>
 
 //********************************************
@@ -40,6 +42,7 @@ public:
     }
     void Notify()
     {
+
         for(unsigned int i=0; i<listObservers.size(); ++i)
         {
             listObservers[i]->Update();
