@@ -8,14 +8,13 @@
 #include "Command.h"
 class TextDocument;
 
-
-
 class DocumentControl
 {
 public:
     DocumentControl(TextDocument &doc);
     void InsertRowAt(int row, std::string text);
     void InsertCharAt(int row, int col, char ch);
+    void DeleteCharAt(int row, int col);
     void ClearRows();
     void Execute(Command *pCommand);
     int GetRowLength(int row);
@@ -28,20 +27,17 @@ private:
     CommandHistory history;
 };
 
-
-
-
 class TextDocument : public ECObserver
 {
 public:
-
-    TextDocument(ECTextViewImp *_pView) : pView(_pView), docCtrl(*this) {
+    TextDocument(ECTextViewImp *_pView) : pView(_pView), docCtrl(*this)
+    {
         pView->Attach(this);
+        rows = std::vector<std::string>();
     }
 
     virtual void Update()
     {
-        std::cout << "TextDocument::Update()" << std::endl;
     }
 
     void ClearRows()
@@ -52,6 +48,8 @@ public:
     }
 
     void InsertRowAt(int row, std::string text);
+    void InsertCharAt(int row, int col, char ch);
+    void DeleteCharAt(int row, int col);
     int GetRowLength(int row);
     void AddRow(std::string text);
     void RefreshView();
@@ -60,17 +58,11 @@ public:
 
     DocumentControl &GetCtrl() { return docCtrl; }
 
-
 private:
     DocumentControl docCtrl;
     ECTextViewImp *pView;
 
-
-    std::vector <std::string> rows;
+    std::vector<std::string> rows;
 };
-
-
-
-
 
 #endif // DOCUMENT_H

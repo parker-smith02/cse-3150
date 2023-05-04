@@ -4,7 +4,7 @@
 #include "KeyObservers.h"
 #include <iostream>
 
-using namespace  std;
+using namespace std;
 
 int myCounter = 0;
 
@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
     EscapeObserver escObserver(&wndTest, &docCtrl);
     CursorObs cursorObs(&wndTest, &docCtrl);
     EnterObs enterObs(&wndTest, &docCtrl);
+    CharObs charObs(&wndTest, &docCtrl);
+    DeleteObs deleteObs(&wndTest, &docCtrl);
 
     doc.AddRow("CSE 3150");
     wndTest.SetColor(0, 0, 0, TEXT_COLOR_RED);
@@ -35,8 +37,8 @@ int main(int argc, char *argv[])
 
     // add a status bar
     wndTest.AddStatusRow("Editor", "For demo only", true);
-    
+
     wndTest.Show();
-    
+
     return 0;
 }

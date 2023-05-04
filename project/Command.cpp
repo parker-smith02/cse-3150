@@ -83,8 +83,6 @@ void EnterCommand::Execute()
     if (cursorX == docCtrl.GetRowLength(cursorY))
     {
         docCtrl.InsertRowAt(cursorY + 1, "");
-        pView.SetCursorX(0);
-        pView.SetCursorY(cursorY + 1);
     }
     else
     {
@@ -94,8 +92,30 @@ void EnterCommand::Execute()
         docCtrl.SetRow(cursorY, newRow);
         docCtrl.InsertRowAt(cursorY + 1, newNextRow);
     }
+    pView.SetCursorX(0);
+    pView.SetCursorY(cursorY + 1);
 }
 
 void EnterCommand::UnExecute()
+{
+}
+
+void InsertCharCommand::Execute()
+{
+    std::string curRow = docCtrl.GetRow(row);
+    docCtrl.InsertCharAt(row, col, ch);
+}
+
+void InsertCharCommand::UnExecute()
+{
+}
+
+void DeleteCharCommand::Execute()
+{
+    std::string curRow = docCtrl.GetRow(row);
+    docCtrl.DeleteCharAt(row, col);
+}
+
+void DeleteCharCommand::UnExecute()
 {
 }

@@ -3,9 +3,7 @@
 #include <vector>
 #include "Document.h"
 
-
 //*******DOCUMENT CONTROL********
-
 
 void DocumentControl::Execute(Command *pCommand) { history.Execute(pCommand); }
 
@@ -21,7 +19,12 @@ void DocumentControl::InsertRowAt(int row, std::string text)
 
 void DocumentControl::InsertCharAt(int row, int col, char ch)
 {
-    std::cout << "DocumentControl::InsertCharAt()" << std::endl;
+    pDoc.InsertCharAt(row, col, ch);
+}
+
+void DocumentControl::DeleteCharAt(int row, int col)
+{
+    pDoc.DeleteCharAt(row, col);
 }
 
 void DocumentControl::ClearRows()
@@ -44,14 +47,25 @@ void DocumentControl::SetRow(int row, std::string text)
     pDoc.SetRow(row, text);
 }
 
-
 //*******DOCUMENT********
 
 void TextDocument::InsertRowAt(int row, std::string text)
 {
-    rows.insert(rows.begin() + row, text);
-    RefreshView();
-    
+    if (rows.size() >= row)
+    {
+        rows.insert(rows.begin() + row, text);
+        RefreshView();
+    }
+}
+
+void TextDocument::InsertCharAt(int row, int col, char ch)
+{
+    if (rows.size() >= row)
+    {
+        rows[row].insert(col, 1, ch);
+        RefreshView();
+        pView->SetCursorX(col + 1);
+    }
 }
 
 void TextDocument::AddRow(std::string text)
@@ -84,3 +98,12 @@ void TextDocument::SetRow(int row, std::string text)
     RefreshView();
 }
 
+void TextDocument::DeleteCharAt(int row, int col)
+{
+    if (rows.size() >= row && col >= 0)
+    {
+        rows[row].erase(col, 1);
+        RefreshView();
+        pView->SetCursorX(col - 1);
+    }
+}
