@@ -5,7 +5,7 @@ SRC = ECTextViewImp.cpp ECEditorTest.cpp Document.cpp Command.cpp KeyObservers.c
 OBJ = $(SRC:.cpp=.o)
 
 editor: $(OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ -arch x86_64 -o $@
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

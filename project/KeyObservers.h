@@ -65,4 +65,47 @@ private:
     DocumentControl *docCtrl;
 };
 
+class SwapModeObs : public ECObserver
+{
+public:
+    SwapModeObs(ECTextViewImp *pView, DocumentControl *pCtrl) : pView(pView), docCtrl(pCtrl)
+    {
+        pView->Attach(this);
+    }
+
+    void Update();
+private:
+    DocumentControl *docCtrl;
+    ECTextViewImp *pView;
+};
+
+class UndoObs : public ECObserver
+{
+public:
+    UndoObs(ECTextViewImp *pView, DocumentControl *pCtrl) : pView(pView), docCtrl(pCtrl)
+    {
+        pView->Attach(this);
+    }
+
+    void Update();
+private:
+    DocumentControl *docCtrl;
+    ECTextViewImp *pView;
+};
+
+class RedoObs : public ECObserver
+{
+public:
+    RedoObs(ECTextViewImp *pView, DocumentControl *pCtrl) : pView(pView), docCtrl(pCtrl)
+    {
+        pView->Attach(this);
+    }
+
+    void Update();
+    
+private:
+    DocumentControl *docCtrl;
+    ECTextViewImp *pView;
+};
+
 #endif // KEYOBSERVERS_H

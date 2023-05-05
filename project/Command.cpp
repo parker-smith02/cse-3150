@@ -58,22 +58,41 @@ void MoveCursorCommand::UnExecute()
 {
 }
 
-bool CommandHistory::Undo()
+void CommandHistory::Undo()
 {
-    commandStack.top()->UnExecute();
-    undoStack.push(commandStack.top());
+    while (!commandStack.empty())
+    {
+        if (commandStack.top()->CanUndo())
+        {
+            undoStack.push(commandStack.top());
+            commandStack.top()->UnExecute();
+        }
+        commandStack.pop();
+    }
 }
 
-bool CommandHistory::Redo()
+void CommandHistory::Redo()
 {
-    undoStack.top()->Execute();
-    commandStack.push(undoStack.top());
+    while (!undoStack.empty())
+    {
+        if (undoStack.top()->CanUndo())
+        {
+            commandStack.push(undoStack.top());
+            undoStack.top()->Execute();
+        }
+        undoStack.pop();
+    }
 }
 
 void CommandHistory::Execute(Command *pCommand)
 {
     pCommand->Execute();
     commandStack.push(pCommand);
+}
+
+EnterCommand::EnterCommand(ECTextViewImp &_pView, DocumentControl &_docCtrl) : pView(_pView), docCtrl(_docCtrl)
+{
+    originalRowNum = pView.GetCursorY();
 }
 
 void EnterCommand::Execute()
@@ -98,6 +117,13 @@ void EnterCommand::Execute()
 
 void EnterCommand::UnExecute()
 {
+    std::string curRow = docCtrl.GetRow(originalRowNum);
+    std::string prevRow = docCtrl.GetRow(originalRowNum + 1);
+    std::string newRow = curRow + prevRow;
+    docCtrl.SetRow(originalRowNum, newRow);
+    docCtrl.DeleteRowAt(originalRowNum + 1);
+    pView.SetCursorX(curRow.length());
+    pView.SetCursorY(originalRowNum);
 }
 
 void InsertCharCommand::Execute()
@@ -108,6 +134,12 @@ void InsertCharCommand::Execute()
 
 void InsertCharCommand::UnExecute()
 {
+    docCtrl.DeleteCharAt(row, col + 1);
+}
+
+DeleteCharCommand::DeleteCharCommand(DocumentControl &_docCtrl, int _row, int _col) : docCtrl(_docCtrl), row(_row), col(_col)
+{
+    charToDelete = docCtrl.GetDoc().GetRow(row)[col - 1];
 }
 
 void DeleteCharCommand::Execute()
@@ -118,4 +150,5 @@ void DeleteCharCommand::Execute()
 
 void DeleteCharCommand::UnExecute()
 {
+    docCtrl.InsertCharAt(row, col - 1, charToDelete);
 }

@@ -14,6 +14,7 @@ public:
     virtual ~Command() {}
     virtual void Execute() = 0;
     virtual void UnExecute() = 0;
+    virtual bool CanUndo() { return true; }
 };
 
 class CommandHistory
@@ -21,9 +22,14 @@ class CommandHistory
 public:
     CommandHistory() {}
     virtual ~CommandHistory() {}
-    bool Undo();
-    bool Redo();
+    void Undo();
+    void Redo();
     void Execute(Command *pCommand);
+    void Reset()
+    {
+        commandStack = std::stack<Command *>();
+        undoStack = std::stack<Command *>();
+    }
 
 private:
     std::stack<Command *> commandStack;
@@ -39,6 +45,8 @@ public:
 
     virtual void UnExecute();
 
+    virtual bool CanUndo() { return false; }
+
 private:
     ECTextViewImp *pView;
     int key;
@@ -48,15 +56,18 @@ private:
 class EnterCommand : public Command
 {
 public:
-    EnterCommand(ECTextViewImp &_pView, DocumentControl &_docCtrl) : pView(_pView), docCtrl(_docCtrl) {}
+    EnterCommand(ECTextViewImp &_pView, DocumentControl &_docCtrl);
 
     virtual void Execute();
 
     virtual void UnExecute();
 
+    virtual bool CanUndo() { return true; }
+
 private:
     DocumentControl &docCtrl;
     ECTextViewImp &pView;
+    int originalRowNum;
 };
 
 class InsertCharCommand : public Command
@@ -68,6 +79,8 @@ public:
 
     virtual void UnExecute();
 
+    virtual bool CanUndo() { return true; }
+
 private:
     DocumentControl &docCtrl;
     char ch;
@@ -78,16 +91,19 @@ private:
 class DeleteCharCommand : public Command
 {
 public:
-    DeleteCharCommand(DocumentControl &_docCtrl, int _row, int _col) : docCtrl(_docCtrl), row(_row), col(_col) {}
+    DeleteCharCommand(DocumentControl &_docCtrl, int _row, int _col);
 
     virtual void Execute();
 
     virtual void UnExecute();
 
+    virtual bool CanUndo() { return true; }
+
 private:
     DocumentControl &docCtrl;
     int row;
     int col;
+    char charToDelete;
 };
 
 #endif // COMMAND_H
