@@ -1,6 +1,5 @@
 // Test code for editor
 #include "ECTextViewImp.h"
-#include "DisplayName.h"
 #include "KeyObservers.h"
 #include <iostream>
 #include <string>
@@ -36,8 +35,8 @@ int main(int argc, char *argv[])
     string filename = argv[1];
 
     ECTextViewImp wndTest;
-    TextDocument doc(&wndTest, filename);
-    DocumentControl &docCtrl = doc.GetCtrl();
+    TextDocument *doc = new TextDocument(&wndTest, filename);
+    DocumentControl &docCtrl = doc->GetCtrl();
     CursorObs cursorObs(&wndTest, &docCtrl);
     EnterObs enterObs(&wndTest, &docCtrl);
     CharObs charObs(&wndTest, &docCtrl);
@@ -53,6 +52,9 @@ int main(int argc, char *argv[])
     
 
     wndTest.Show();
+
+
+    delete doc;
 
     return 0;
 }

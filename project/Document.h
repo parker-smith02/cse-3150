@@ -12,7 +12,7 @@ class DocumentControl
 {
 public:
     DocumentControl(TextDocument &doc);
-    virtual ~DocumentControl();
+    virtual ~DocumentControl() {}
     void InsertRowAt(int row, std::string text);
     void DeleteRowAt(int row);
     void InsertCharAt(int row, int col, char ch);
@@ -37,6 +37,8 @@ class TextDocument : public ECObserver
 {
 public:
     TextDocument(ECTextViewImp *_pView, std::string _saveFile = "");
+
+    virtual ~TextDocument() { Save(); }
 
     void Save();
 
@@ -66,6 +68,7 @@ public:
     int SetMode(int _mode) { this->mode = _mode; }
     std::string GetSaveFile() { return saveFile; }
     void WrapRow(int row, char ch);
+    bool IsWrappedRow(int row);
 
 private:
     void LoadKeywords();

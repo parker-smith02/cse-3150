@@ -34,7 +34,7 @@ void CharObs::Update()
 void DeleteObs::Update()
 {
     int key = pView->GetPressedKey();
-    if (key == 127 && docCtrl->GetMode() == 1 && pView->GetCursorX() >= 0 && pView->GetCursorY() >= 0)
+    if (key == 127 && docCtrl->GetMode() == 1 && pView->GetCursorX() > 0 && pView->GetCursorY() >= 0)
     {
         DeleteCharCommand *pCommand = new DeleteCharCommand(*docCtrl, pView->GetCursorY(), pView->GetCursorX());
         docCtrl->Execute(pCommand);

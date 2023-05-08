@@ -14,10 +14,6 @@ DocumentControl::DocumentControl(TextDocument &doc) : pDoc(doc)
     history = CommandHistory();
 }
 
-DocumentControl::~DocumentControl()
-{
-    pDoc.Save();
-}
 
 void DocumentControl::InsertRowAt(int row, std::string text)
 {
@@ -72,11 +68,10 @@ void DocumentControl::SwapMode()
     }
 
     pDoc.SetMode(GetMode() == 0 ? 1 : 0);
-    
 }
 
 //*******DOCUMENT********
-TextDocument::TextDocument(ECTextViewImp *_pView, std::string _saveFile) : pView(_pView), docCtrl(*this)
+TextDocument::TextDocument(ECTextViewImp *_pView, std::string _saveFile) : pView(_pView), docCtrl(*this), saveFile(_saveFile)
 {
     pView->Attach(this);
     rows = std::vector<std::string>();
@@ -86,11 +81,12 @@ TextDocument::TextDocument(ECTextViewImp *_pView, std::string _saveFile) : pView
 
 void TextDocument::Save()
 {
+    pView->AddStatusRow(saveFile, "", 1);
     std::ofstream file;
-    file.open(saveFile);
+    file.open("./" + saveFile, std::ofstream::out | std::ofstream::trunc);
     for (std::string row : rows)
     {
-        file << row << "\n";
+        file << row << std::endl;
     }
     file.close();
 }
@@ -118,11 +114,18 @@ void TextDocument::InsertCharAt(int row, int col, char ch)
 {
     if (rows.size() >= row)
     {
+        bool flag = false;
         int rowSize = rows[row].length();
         bool wrapped = false;
         if (rowSize >= pView->GetColNumInView() - 1)
         {
-            col - 1 == rowSize ? ch = rows[row][col - 1] : ch = ch;
+            if (col != rowSize)
+            {
+                char temp = rows[row][col];
+                rows[row][col] = ch;
+                ch = temp;
+                flag = true;
+            }
             WrapRow(row, ch);
             row++;
             col = 0;
@@ -130,10 +133,12 @@ void TextDocument::InsertCharAt(int row, int col, char ch)
         }
         rows[row].insert(col, 1, ch);
         RefreshView();
+        int oldX = pView->GetCursorX();
         pView->SetCursorX(col + 1);
         if (wrapped)
         {
             pView->SetCursorY(pView->GetCursorY() + 1);
+            pView->SetCursorX(col + 1);
         }
     }
 }
@@ -247,9 +252,21 @@ std::vector<std::string> TextDocument::Split(std::string str)
     return tokens;
 }
 
-void TextDocument::WrapRow(int row, char ch)  //takes in ORIGINAL row
+void TextDocument::WrapRow(int row, char ch) // takes in ORIGINAL row
 {
+    std::string newRow = "";
+    if (wrappedRows[row + 1] == 1)
+    {
+        return;
+    }
+    else
+    {
+        InsertRowAt(row + 1, newRow);
+        wrappedRows[row + 1] = 1;
+    }
+}
 
-    InsertRowAt(row + 1, "");
-    wrappedRows[row + 1] = 1;
+bool TextDocument::IsWrappedRow(int row)
+{
+    return wrappedRows[row] == 1;
 }

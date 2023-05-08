@@ -47,6 +47,8 @@ public:
 
     virtual bool CanUndo() { return false; }
 
+    bool IsWrappedRow(int row);
+
 private:
     ECTextViewImp *pView;
     int key;

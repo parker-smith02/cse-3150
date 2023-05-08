@@ -23,6 +23,10 @@ void MoveCursorCommand::Execute()
         if (cursorX > 0)
         {
             pView->SetCursorX(cursorX - 1);
+        } else if (IsWrappedRow(cursorY))
+        {
+            pView->SetCursorY(cursorY - 1);
+            pView->SetCursorX(prevLineLength);
         }
         break;
 
@@ -30,13 +34,22 @@ void MoveCursorCommand::Execute()
         if (lineLength > cursorX)
         {
             pView->SetCursorX(cursorX + 1);
+        } else if (IsWrappedRow(cursorY + 1))
+        {
+            pView->SetCursorY(cursorY + 1);
+            pView->SetCursorX(0);
         }
         break;
 
     case 1002: // up
         if (cursorY > 0)
         {
-            pView->SetCursorY(cursorY - 1);
+            int i = 1;
+            if (IsWrappedRow(cursorY - 1))
+            {
+                i = 2;
+            }
+            pView->SetCursorY(cursorY - i);
             if (prevLineLength < cursorX)
             {
                 pView->SetCursorX(prevLineLength);
@@ -56,6 +69,11 @@ void MoveCursorCommand::Execute()
 
 void MoveCursorCommand::UnExecute()
 {
+}
+
+bool MoveCursorCommand::IsWrappedRow(int row)
+{
+    return pDoc.IsWrappedRow(row);
 }
 
 void CommandHistory::Undo()

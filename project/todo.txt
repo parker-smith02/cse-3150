@@ -1,6 +1,0 @@
-put code to write file in control destructor
-
-Fix memory leaks
-    - destructors for observers
-        * detach
-
